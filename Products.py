@@ -100,10 +100,41 @@ class Product:
         self.get_products()
 
     def edit_product(self):
-        pass
+        self.message['text']=''
+        try:
+            self.tree.item(self.tree.selection())['text'][0]
+        except IndexError as e:
+            self.message['text']='Please Select a Record'
+            return
+        name=self.tree.item(self.tree.selection())['text']
+        old_price=self.tree.item(self.tree.selection())['values'][0]
+        self.edit_wind=Toplevel()
+        self.edit_wind.title='Edit Product'
 
+        Label(self.edit_wind, text='Old name').grid(row=0, column=1)
+        Entry(self.edit_wind, textvariable=StringVar(self.edit_wind, value=name), state='readonly').grid(row=0, column=2)
 
+        Label(self.edit_wind, text='New name').grid(row=1, column=1)
+        new_name=Entry(self.edit_wind)  
+        new_name.grid(row=1, column=2)    
 
+        Label(self.edit_wind, text='Old price').grid(row=2, column=1)
+        Entry(self.edit_wind, textvariable=StringVar(self.edit_wind, value=old_price), state='readonly').grid(row=2, column=2)
+
+        Label(self.edit_wind, text='New price').grid(row=3, column=1)
+        new_price=Entry(self.edit_wind)  
+        new_price.grid(row=3, column=2)    
+
+        Button(self.edit_wind, text='Update', command= lambda:self.edit_records(new_name.get(), name, new_price.get(), old_price
+                                                                                 )).grid(row=4, column=2, sticky=W) 
+
+    def edit_records(self, new_name, name, new_price, old_price):
+        query='UPDATE product SET name = ?, price = ? WHERE name = ? AND price = ?'
+        parameters=(new_name, new_price, name, old_price)
+        self.run_query(query, parameters)
+        self.edit_wind.destroy()
+        self.message['text']='Record {} updated Successfully'.format(name)
+        self.get_products()
 
 
 if (__name__=='__main__'):
@@ -111,5 +142,3 @@ if (__name__=='__main__'):
     app=Product(window)
     window.resizable(False, False)
     window.mainloop()
-
-
