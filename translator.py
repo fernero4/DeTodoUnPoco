@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter import ttk, messagebox
+from googletrans import Translator
 import googletrans
 import textblob
 
@@ -30,24 +31,21 @@ def translate_text():
     global language
     try:
         text_ = text1.get(1.0, END)
-        # c2 = combo1.get()
-        c3 = combo2.get()
-
         if (text_):
+            translator=Translator()
             words = textblob.TextBlob(text_)
-            print(words)
-            lan = words.detect_language()
-            print(str(lan))
+            lan = combo2.get()
+
             for i, j in language.items():
                 if (j == lan):
-                    lan_ = i
+                    language_traslate = i
 
-            words = words.translate(from_lang=lan, to=str(lan_))
+            words = translator.translate(text_, dest=language_traslate)
+            words=words.text
             text2.delete(1.0, END)
             text2.insert(END, words)
     except Exception as e:
         messagebox.showerror("Translator", "Please try again!")
-
 
 # icon
 icon_image = PhotoImage(file=Images_Path+"icon.png")
@@ -107,8 +105,8 @@ text2.configure(yscrollcommand=scrolbar1.set)
 
 # translate button
 translate = Button(root, text="Translate", font=("Roboto 15 bold italic"),
-                   activebackground="purple", cursor="hand2", bd=5,
-                   bg="red", fg="white", command=translate_text)
+                   activebackground="white", cursor="hand2", bd=1,
+                   bg="black", fg="white", command=translate_text)
 translate.place(x=480, y=250)
 
 
